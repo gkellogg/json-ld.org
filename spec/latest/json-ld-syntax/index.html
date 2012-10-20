@@ -158,9 +158,9 @@
 
           // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
           // and its maturity status
-          previousPublishDate:  "2012-08-30",
+          previousPublishDate:  "2012-09-30",
           previousMaturity:     "FPWD",
-          previousDiffURI:      "http://www.w3.org/TR/2012/WD-json-ld-syntax-20120830/",
+          previousDiffURI:      "http://json-ld.org/spec/ED/json-ld-syntax/20120930/",
           diffTool:             "http://www.aptest.com/standards/htmldiff/htmldiff.pl",
 
           // if there a publicly available Editor's Draft, this is the link
@@ -256,12 +256,18 @@ in JSON, this specification outlines a common JSON representation format for
 expressing directed graphs; mixing both Linked Data and non-Linked Data in
 a single document.
 </p>
+<p>JSON-LD is a serialization format of the Resource Description Framework (RDF), a
+  general-pubpose language for representing information in the Web. This
+  document defines a JSON serializion for RDF that allows
+  <tref title="RDF graph">RDF graphs</tref> and <tref title="RDF dataset">datasets</tref>
+  to be expressed naturaly in JSON, while using conventions common to other
+  JSON representations.</p>
 </section>
 
 <section id='sotd'>
 <p>This document has been under development for over 20 months in the
-JSON for Linking Data Community Group. The document has recently been
-transferred to the RDF Working Group for review, improvement, and publication
+JSON for Linking Data Community Group. The document is now
+a product of the RDF Working Group, for publication
 along the Recommendation track. The specification has undergone significant
 development, review, and changes during the course of the last 20 months.
 </p>
@@ -323,7 +329,10 @@ this specification:</p>
   and follow the links to other pieces of data that are hosted on different
   sites across the Web.</p>
 
-<p>JSON-LD is designed as a lightweight syntax to express <tref>Linked Data</tref> in
+<p>JSON-LD is a form of
+  the Resource Description Framework (<cite><a href="http://www.w3.org/TR/rdf11-concepts/"><tref>RDF</tref></a></cite>)
+  as defined in [!RDF-CONCEPTS]],
+  designed as a lightweight syntax to express <tref>Linked Data</tref> in
   JSON [[!RFC4627]]. It is primarily intended to be a way to use Linked Data in
   Web-based programming environments. It is also useful when building interoperable
   Web services and when storing Linked Data in JSON-based storage engines. JSON-LD is
@@ -450,27 +459,23 @@ JSON, which is detailed in [[!RFC4627]].</p>
 <h1>Basic Concepts</h1>
 
 <section>
-<h2>JSON-LD Data Model</h2>
+<h2>Data Model</h2>
 
-<p>JSON-LD is a way of expressing <tref>Linked Data</tref> on the Web. The
-  JSON-LD data model encapsulates the following concepts:</p>
+<p>JSON-LD is a way of expressing <tref>Linked Data</tref> on the Web
+  using <tref>RDF</tref>. The <tdef>data model</tdef> is that of
+  <tdef title="RDF graph">
+    <cite><a href="http://www.w3.org/TR/rdf11-concepts/#section-rdf-graph">RDF graphs</a></cite>
+  </tdef> and <tdef title="RDF dataset">
+    <cite><a href="http://www.w3.org/TR/rdf11-concepts/#section-dataset">datasets</a></cite>
+  </tdef>, expressed using JSON.</p>
 
-<ol>
-  <li>The <tdef>JSON-LD data model</tdef> is used to represent <tref title="JSON-LD graph">JSON-LD graphs</tref>.</li>
-  <li>A <tdef>JSON-LD graph</tdef> is an unordered labeled directed graph, where each <tdef>node</tdef> is a <tref>subject</tref> or <tref>object</tref>, and edges are labeled using <tref title="property">properties</tref>.</li>
-  <li>A <tdef>subject</tdef> is any node in a <tref>JSON-LD graph</tref> with at least one outgoing edge.</li>
-  <li>A <tref>subject</tref> SHOULD be labeled with an <tref><abbr title="Internationalized Resource Identifier">IRI</abbr></tref> (an Internationalized Resource Identifier as described in [[!RFC3987]]).</li>
-  <li>An <tdef>object</tdef> is a node in a <tref>JSON-LD graph</tref> with at least one incoming edge.</li>
-  <li>An <tref>object</tref> MAY be labeled with an <tref>IRI</tref> or a label that is not an <tref>IRI</tref> such as plain text, internationalized text, or a strictly-typed data value.</li>
-  <li>A <tref>node</tref> MAY be a <tref>subject</tref> and an <tref>object</tref> at the same time.</li>
-  <li>A <tdef>property</tdef> is the label on an edge in a <tref>JSON-LD graph</tref>.</li>
-  <li>A <tref>property</tref> SHOULD be an <tref>IRI</tref>.</li>
-  <li>An <tref>IRI</tref> that is a label in a <tref>JSON-LD graph</tref> SHOULD be dereferencable to a <tref>Linked Data</tref> document describing the labeled <tref>subject</tref>, <tref>property</tref> or <tref>object</tref>.</li>
-</ol>
-
-<img style="padding: 5px; border-style: solid; border-width: 1px; display: block; margin-left: auto; margin-right: auto;" src="linked-data-graph.png" title="An example of a JSON-LD graph" longdesc="An example of a JSON-LD graph showing two main nodes labeled with URLs for Alice and Bob. The Alice node contains two other connected nodes showing Alice's age (32) and name (Alice)."/>
+<img
+  style="padding: 5px; border-style: solid; border-width: 1px; display: block; margin-left: auto; margin-right: auto;"
+  src="linked-data-graph.png"
+  title="An example of an RDF graph in JSON-LD"
+  longdesc="An example of an RDF graph showing two main nodes labeled with URLs for Alice and Bob. The Alice node contains two other connected nodes showing Alice's age (32) and name (Alice)."/>
 <p style="text-align: center;">
-Figure 1: An example of a JSON-LD graph.
+Figure 1: An example of an <tref>RDF graph</tref>.
 </p>
 <p>There are a number of best practices that can ensure that developers
 will generate good Linked Data for the Web. JSON-LD
@@ -527,11 +532,23 @@ their data into <tref>Linked Data</tref>.
       definition is undefined.</dd>
     <dt><tdef>node definition</tdef></dt><dd>
       A <tref>JSON object</tref> used to represent a <tref>node</tref> and
-      one or more properties of that node. A <tref>JSON object</tref> is a
+      one or more <tref title="property">properties</tref> of that node.
+      A <tref>JSON object</tref> is a
       node definition if it does not contain the keys <code>@value</code>,
       <code>@list</code> or <code>@set</code> and it has one or more keys other
       than <code>@id</code>. A node definition MAY be spread among different
-      parts of a document or even between different documents.</dd>
+      parts of a document or even between different documents.
+      A <tref>node definition</tref> is a representation of an
+      <cite><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-resource">RDF resource</a></cite>,
+      where the <tdef title="property">properties</tdef> of that node express
+      <cite><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-predicate">predicates</a></cite>.
+      In RDF, the set of <tdef title="node">nodes</tdef> in an <tref>RDF graph</tref> is
+      defined by the set of subjects and objects within that graph. A <tref>node definition</tref>
+      is a mechanism used to define
+      <tdef title="RDF Statement">
+        <cite><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-rdf-statement">RDF statements</a></cite>
+      </tdef>.
+    </dd>
     <dt><tdef>node reference</tdef></dt><dd>
       A <tref>JSON object</tref> used to refer to a node that contains a
       single key-value pair where the key is <code>@id</code>.</dd>
@@ -581,7 +598,8 @@ that are a core part of the language:</p>
 <dt><code>@vocab</code></dt>
 <dd>Used to set the base <tref>IRI</tref> for all property IRIs affected by the
   <tref>active context</tref>. This keyword is described in section <a href="#iris"></a>.</dd>
-<dt><code>@graph</code></dt><dd>Used to explicitly label a <tref>JSON-LD graph</tref>.
+<dt><code>@graph</code></dt><dd>Used to explicitly identify a
+  <cite><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-named-graph">named graph</a></cite>.
   This keyword is described in <a href="#named-graphs"></a>.</dd>
 <dt><code>:</code></dt>
 <dd>The separator for JSON keys and values that use
@@ -603,7 +621,7 @@ case-sensitive.</p>
   as they might be used as <tref title="keyword">keywords</tref> in future versions of JSON-LD. Furthermore,
   the use of empty terms (<code>""</code>) is discouraged as not all programming languages are able to handle
   empty property names.</p>
-<p>The Web uses <tref title="IRI">IRIs</tref> for unambiguous identification. The
+<p><tref>RDF</tref> uses <tref title="IRI">IRIs</tref> for unambiguous identification. The
   idea is that these <tref>term</tref>s mean something that may be of use to other developers and that it is useful to
   give them an unambiguous identifier. That is, it is useful for <tref>term</tref>s to expand to IRIs so that
   developers don't accidentally step on each other's <tdef>vocabulary</tdef> terms and other resources. Furthermore, developers, and
@@ -2335,7 +2353,7 @@ processor will use direct string comparison when looking up
     manner. A developer may name data expressed using the <code>@graph</code>
     <tref>keyword</tref> by pairing it with an <code>@id</code>
     <tref>keyword</tref>. This enables the developer to make statements
-    about a <tref>JSON-LD graph</tref> itself,
+    about an <tref>RDF graph</tref> itself,
     rather than just a single <tref>node</tref>.</p>
 
   <pre class="example" data-transform="updateExample">
@@ -2370,7 +2388,7 @@ processor will use direct string comparison when looking up
   </pre>
 
   <p>The example above expresses a <em>named</em>
-    <tref>JSON-LD graph</tref> that is identified by the <tref>IRI</tref>
+    <tref>RDF graph</tref> that is identified by the <tref>IRI</tref>
     <code>http://example.org/graphs/73</code>. That graph is composed of the
     statements about Manu and Gregg. Metadata about the graph itself is also
     expressed via the <code>asOf</code> property, which specifies when the
@@ -3042,12 +3060,13 @@ a normative grammar for JSON-LD.</p>
 </section>
 
 <section class="appendix informative">
-<h2>Relationship to Other Linked Data Formats and Data Models</h2>
+<h2>Relationship to Other RDF Formats</h2>
 
 <p class="issue" data-number="157">
-The intent of the Working Group and the Editors of this specification is to
-eventually align terminology used in this document with the terminology used
-in the RDF Concepts document [[!RDF-CONCEPTS]] to the extent to which it makes sense to do so.
+JSON-LD is an expression of <tref>RDF</tref>, and it is
+the intent of the Working Group and the Editors of this specification is to
+align terminology used in this document with the terminology used
+in the RDF Concepts document [[!RDF-CONCEPTS]].
 In general, if there is an analogue to terminology used in this document in
 the RDF Concepts document, the preference is to use the terminology in the
 RDF Concepts document.
@@ -3055,12 +3074,12 @@ RDF Concepts document.
 
 <p>JSON-LD is a specification for representing <tref>Linked Data</tref> in JSON. A common
   way of working with Linked Data is through <tdef>RDF</tdef>, the Resource Description Framework.
-  RDF can be expressed using JSON-LD by associating JSON-LD concepts such as <code>@id</code>
+  RDF is expressed in JSON-LD by associating JSON-LD concepts such as <code>@id</code>
   and <code>@type</code> with the equivalent <tref>IRI</tref>s in RDF. Further information about
   RDF may be found in the [[RDF-PRIMER]].</p>
 
 <p>The JSON-LD markup examples below demonstrate how JSON-LD can be used to
-  express semantic data marked up in other languages and data models
+  express semantic data marked up in other RDF serialization formats
   such as RDF, Turtle, RDFa, Microformats,
   and Microdata. These sections are merely provided as evidence that JSON-LD is
   very flexible in what it can express across different <tref>Linked Data</tref> approaches.
@@ -3068,34 +3087,19 @@ RDF Concepts document.
   [[JSON-LD-API]].</p>
 
 <section>
-  <h3>RDF</h3>
+  <h3>RDF Statements</h3>
 
   <p>The RDF data model, as outlined in [[RDF-CONCEPTS]], is an abstract
   syntax for representing a directed graph of information. JSON-LD is
-  capable of serializing any RDF graph, and performing full RDF to
-  JSON-LD to RDF round-tripping. A complete description of how JSON-LD maps
-  to RDF and algorithms detailing how one can convert from RDF to
-  JSON-LD and from JSON-LD to RDF are included in the JSON-LD API
+  capable of serializing any <tref>RDF graph</tref> or <tref>RDF dataset</tref>.
+  A complete description of how to convert between JSON-LD and
+  <tref title="RDF Statement">RDF Statements</tref> are included in the JSON-LD API
   [[JSON-LD-API]] specification.
   </p>
-
-  <p>JSON-LD allows properties to be BNodes, while RDF does
-  not. Expressing properties as BNodes in JSON-LD only becomes an issue
-  (and could raise an exception) when it is transformed to RDF.</p>
-
-  <p>Note that the <tref>JSON-LD data model</tref> is silent on the topic of
-  <tref title="unlabeled node">unlabeled nodes</tref>. Nevertheless,
-  this specification allows for the expression of
-  <tref title="unlabeled node">unlabeled nodes</tref>, as most graph-based data
-  sets on the Web contain a number of associated nodes that are not named and
-  thus are not directly de-referenceable.
-  </p>
-
-<section>
+  <section>
   <h3>Turtle</h3>
 
-  <p>The following are examples of converting <tref>RDF</tref>
-  expressed in [[TURTLE-TR]] into JSON-LD.</p>
+  <p>The following are examples of converting [[TURTLE-TR]] into JSON-LD.</p>
 
 <section>
 <h4>Prefix definitions</h4>
@@ -3262,8 +3266,10 @@ described below.</p>
 <section>
 <h3>Microformats</h3>
 
-<p>The following example uses a simple Microformats hCard example to express
-how the Microformat is represented in JSON-LD.</p>
+<p>Although Microformats are not an expression of <tref>RDF</tref>, they
+  are a commonly used format for representing <tref>Linked Data</tref>.
+  The following example uses a simple Microformats hCard example to express
+  how the Microformat is represented in JSON-LD.</p>
 
 <pre class="example" data-transform="updateExample">
 <!--
@@ -3451,7 +3457,7 @@ becomes a W3C Recommendation.</p>
 </dl>
 
 <p>Fragment identifiers used with <a href="#application-ld-json">application/ld+json</a>
-  resources MAY identify a node in a <tref>JSON-LD graph</tref> expressed in
+  resources MAY identify a node in an <tref>RDF graph</tref> expressed in
   the resource. This idiom, which is also used in RDF [[RDF-CONCEPTS]], gives a
   simple way to "mint" new, document-local IRIs to label nodes and therefore contributes
   considerably to the expressive power of JSON-LD.</p>
